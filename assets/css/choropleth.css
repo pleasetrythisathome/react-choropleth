@@ -1,5 +1,8 @@
-.counties {
-  fill: none;
+.county {
+  transition: fill linear 0.2s;
+}
+.county:hover {
+  fill: red !important;
 }
 
 .states {
