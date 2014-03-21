@@ -39,14 +39,33 @@ Choropleth.Map = React.createClass({
       });
   },
 
+  renderCounties: function() {
+    if (_.isEmpty(this.state.counties)) return;
+
+    var g = React.DOM.g;
+
+    return g({
+      className: "counties"
+    },
+             _.map(this.state.counties, this.createCounty));
+  },
+  createCounty: function(county) {
+    return Choropleth.County({
+      addClass: this.quantize(this.rateById.get(county.id)),
+      path: this.path(county)
+    });
+  },
   renderStates: function() {
+    if (_.isEmpty(this.state.states)) return;
+
     var path = React.DOM.path;
 
     return path({
-      className: states,
-      d: this.props.path(states)
+      className: "states",
+      d: this.path(this.state.states)
     });
   },
+
   render: function() {
     var cmp = this;
 
@@ -54,35 +73,29 @@ Choropleth.Map = React.createClass({
     var g = React.DOM.g;
     var path = React.DOM.path;
 
-    var counties;
-    if (!_.isEmpty(this.state.counties)) {
-      counties = g({
-        className: "counties"
-      },
-                  _.map(this.state.counties, function(county) {
-                    return path({
-                      className: cmp.quantize(cmp.rateById.get(county.id)),
-                      d: cmp.path(county)
-                    });
-                  }));
-    }
-
-    var states;
-    if (!_.isEmpty(this.state.states)) {
-      states = path({
-        className: "states",
-        d: this.path(this.state.states)
-      });
-    }
-
-
     return svg({
       className: "choropleth Blues",
       width: this.props.width,
       height: this.props.height
     },
-              counties,
-              states);
+              this.renderCounties(),
+              this.renderStates());
+  }
+});
+
+Choropleth.County = React.createClass({
+  getDefaultProps: function() {
+    return {
+      addClass: ""
+    };
+  },
+  render: function() {
+    var path = React.DOM.path;
+
+    return path({
+      className: "county " + this.props.addClass,
+      d: this.props.path
+    });
   }
 });
 
