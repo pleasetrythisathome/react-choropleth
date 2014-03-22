@@ -28,6 +28,8 @@
     "underscore": "~1.6.0",
     "d3": "~3.4.3",
     "react.animate": "*",
-    "colorbrewer": "~1.0.0"
+    "colorbrewer": "~1.0.0",
+    "queue-async": "~1.0.7",
+    "topojson": "~1.5.1"
   }
 }
