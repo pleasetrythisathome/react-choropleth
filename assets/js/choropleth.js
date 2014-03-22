@@ -39,14 +39,6 @@ Choropleth.Map = React.createClass({
       });
   },
 
-  renderStates: function() {
-    var path = React.DOM.path;
-
-    return path({
-      className: states,
-      d: this.props.path(states)
-    });
-  },
   render: function() {
     var cmp = this;
 
