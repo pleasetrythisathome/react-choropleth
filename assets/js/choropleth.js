@@ -54,35 +54,24 @@ Choropleth.Map = React.createClass({
     var g = React.DOM.g;
     var path = React.DOM.path;
 
-    var counties;
-    if (!_.isEmpty(this.state.counties)) {
-      counties = g({
-        className: "counties"
-      },
-                  _.map(this.state.counties, function(county) {
-                    return path({
-                      className: cmp.quantize(cmp.rateById.get(county.id)),
-                      d: cmp.path(county)
-                    });
-                  }));
-    }
-
-    var states;
-    if (!_.isEmpty(this.state.states)) {
-      states = path({
-        className: "states",
-        d: this.path(this.state.states)
-      });
-    }
-
-
     return svg({
       className: "choropleth Blues",
       width: this.props.width,
       height: this.props.height
     },
-              counties,
-              states);
+               g({
+                 className: "counties"
+               },
+                 _.map(this.state.counties, function(county) {
+                   return path({
+                     className: cmp.quantize(cmp.rateById.get(county.id)),
+                     d: cmp.path(county)
+                   });
+                 })),
+               path({
+                 className: "states",
+                 d: this.path(this.state.states)
+               }));
   }
 });
 
