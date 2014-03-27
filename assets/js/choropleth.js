@@ -8,18 +8,11 @@ Choropleth.Map = React.createClass({
     };
   },
 
-  rateById: d3.map(),
-  path: d3.geo.path(),
-  quantize: d3.scale.quantize()
-    .domain([0, 0.15])
-    .range(d3.range(9).map(function(i) {
-      return "q" + i + "-9";
-    })),
-
   getInitialState: function() {
     return {
       counties: [],
-      states: {}
+      states: {},
+      rateById: d3.map()
     };
   },
 
@@ -29,7 +22,7 @@ Choropleth.Map = React.createClass({
     queue()
       .defer(d3.json, "/assets/data/us.json")
       .defer(d3.tsv, "/assets/data/unemployment.tsv", function(d) {
-        cmp.rateById.set(d.id, +d.rate);
+        cmp.state.rateById.set(d.id, +d.rate);
       })
       .await(function(error, us) {
         cmp.setState({
@@ -39,12 +32,20 @@ Choropleth.Map = React.createClass({
       });
   },
 
+  quantize: d3.scale.quantize()
+    .domain([0, 0.15])
+    .range(d3.range(9).map(function(i) {
+      return "q" + i + "-9";
+    })),
+
   render: function() {
     var cmp = this;
 
     var svg = React.DOM.svg;
     var g = React.DOM.g;
     var path = React.DOM.path;
+
+    var pathGenerator = d3.geo.path();
 
     return svg({
       className: "choropleth Blues",
@@ -56,15 +57,15 @@ Choropleth.Map = React.createClass({
                },
                  _.map(this.state.counties, function(county) {
                    return path({
-                     className: cmp.quantize(cmp.rateById.get(county.id)),
-                     d: cmp.path(county)
+                     className: cmp.quantize(cmp.state.rateById.get(county.id)),
+                     d: pathGenerator(county)
                    });
                  })),
                path({
                  className: "states",
-                 d: this.path(this.state.states)
+                 d: pathGenerator(this.state.states)
                }));
   }
 });
 
-React.renderComponent(Choropleth.Map(), document.getElementById("main"));
+React.renderComponent(Choropleth.Map(), document.getElementById("react"));
